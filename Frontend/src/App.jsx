@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 
 export default function App() {
-  const BASEE_URL = "http://localhost:5173";
+  const BASEE_URL = "http://localhost:5000";
 
   const [todos, setTodos] = useState([]);
 
   // const [isEditing, setIsEditing] = useState()
 
   const getTodo = async () => {
-    const res = await axios.get(`${BASEE_URL}/api/v1/todos`);
+    const res = await axios(`${BASEE_URL}/api/v1/todos`);
     const todosFromServer = res?.data?.data;
 
     // const newnew = todosFromServer.map((todo) => {
@@ -30,7 +30,7 @@ export default function App() {
       const todoValue = event.target.children[0].value;
       console.log("todoValue ", todoValue);
 
-      const res = await axios.post(`${BASEE_URL}/api/v1/todo`, {
+      await axios.post(`${BASEE_URL}/api/v1/todo`, {
         todo: todoValue,
       });
       getTodo();
@@ -38,7 +38,6 @@ export default function App() {
       event.target.reset();
     } catch (err) {
       console.log("mera error", err);
-      
     }
   };
 
@@ -78,9 +77,13 @@ export default function App() {
             Add Task
           </button>
         </form>
-
-        {!todos?.length && "todo nhi hy"}
-
+        {/* 
+       {!todos?.length && "todo nhi hy"} */}
+        {!todos?.length && (
+          <p className="text-center text-gray-500">
+            No todos available. Add some tasks!
+          </p>
+        )}
         {/* Todo List */}
         <ul className="mt-6 space-y-4">
           {todos?.map((todo, index) => (
