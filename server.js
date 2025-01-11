@@ -6,11 +6,10 @@ import cors from "cors";
 const todos = [];
 
 app.use(express.json());
-app.use(
-  cors({
-    origin: "https://newtodo-usingbackend.surge.sh",origin:"http://localhost:5000",origin: "https://new-todo-usingbackend.vercel.app"
-  })
-);
+// app.use(
+//     cors({ origin: ["http://localhost:5173", "https://newtodo-usingbackend.surge.sh"] }),
+// );
+app.use(cors())
 //yaha sare todos store honge
 app.get("/api/v1/todos", (req, res) => {
   const message = !todos.length ? "todos empty" : "here your todos";
