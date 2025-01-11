@@ -1,0 +1,15 @@
+{
+    {
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "https://todo-app-with-backend-mu.vercel.app/:path*"
+    },
+    {
+      "source": "/:path*",
+      "destination": "/index.html"
+    }
+  ]
+}
+};
