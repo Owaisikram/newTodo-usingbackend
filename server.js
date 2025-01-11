@@ -6,10 +6,13 @@ import cors from "cors";
 const todos = [];
 
 app.use(express.json());
-// app.use(
-//     cors({ origin: ["http://localhost:5173", "https://newtodo-usingbackend.surge.sh"] }),
-// );
-app.use(cors())
+app.use(
+  cors({
+    origin: ["http://localhost:5173", "https://newtodo-usingbackend.surge.sh"],
+    allowedHeaders : ["Content-Type"],
+  })
+);
+// app.use(cors())
 //yaha sare todos store honge
 app.get("/api/v1/todos", (req, res) => {
   const message = !todos.length ? "todos empty" : "here your todos";
