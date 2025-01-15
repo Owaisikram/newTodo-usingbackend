@@ -7,55 +7,61 @@ export default function App() {
 
   const [todos, setTodos] = useState([]);
 
-  // const [isEditing, setIsEditing] = useState()
-
   const getTodo = async () => {
-    const res = await axios(`${BASEE_URL}/api/v1/todos`);
-    const todosFromServer = res?.data?.data;
-
-    // const newnew = todosFromServer.map((todo) => {
-    //   return { ...todo, isEditing: false };
-    // });
-    setTodos(todosFromServer);
+    try {
+      const res = await axios(`${BASEE_URL}/api/v1/todos`);
+      const todosFromServer = res?.data?.data;
+      setTodos(todosFromServer);
+    } catch (err) {
+      err.response?.data?.message || "unknown error";
+    }
   };
-
   useEffect(() => {
     getTodo();
   }, []);
 
   const addTodo = async (event) => {
+    event.preventDefault();
+
+    const todoValue = event.target.children[0].value;
+
     try {
-      event.preventDefault();
-
-      const todoValue = event.target.children[0].value;
-      console.log("todoValue ", todoValue);
-
       await axios.post(`${BASEE_URL}/api/v1/todo`, {
         todo: todoValue,
       });
       getTodo();
-
       event.target.reset();
     } catch (err) {
-      console.log("mera error", err);
+      toast.error(err?.response?.data?.message || "Faild to add todo");
     }
   };
 
   const deleteTodo = async (todoId) => {
     try {
-      console.log("todoId ", todoId);
-
       const res = await axios.delete(`${BASEE_URL}/api/v1/todo/${todoId}`);
+      console.log("response", res);
 
-      console.log("data ", res.data);
-
-      toast(res.data?.message);
+      toast.success(res?.message || "Todo deleted successfully");
 
       getTodo();
-    } catch (err) {
-      console.log("mera error", err);
+    } catch (err) {}
+  };
 
-      toast.error(err?.response?.data?.message || "unknown errorrr");
+  const editTodo = async (event, todoId) => {
+    event.preventDefault();
+
+    const todoValue = event.target.children[0].value;
+
+    try {
+      await axios.patch(`${BASEE_URL}/api/v1/todo/${todoId}`, {
+        todoContent: todoValue,
+      });
+      
+      toast.success("Todo edited successfully");
+      getTodo();
+      event.target.reset();
+    } catch (err) {
+      toast.error(err?.response?.data?.message || "Faild to edit todo");
     }
   };
 
@@ -70,6 +76,7 @@ export default function App() {
         <form onSubmit={addTodo} className="mb-6 flex flex-col gap-3">
           <input
             type="text"
+            required
             placeholder="Enter your task"
             className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 placeholder-gray-400"
           />
@@ -77,11 +84,11 @@ export default function App() {
             Add Task
           </button>
         </form>
-        {/* 
-       {!todos?.length && "todo nhi hy"} */}
+
+        {!todos?.length && "No todos available. Add some tasks!"}
         {!todos?.length && (
           <p className="text-center text-gray-500">
-            No todos available. Add some tasks!
+            No todos available. Add tasks!
           </p>
         )}
         {/* Todo List */}
@@ -94,13 +101,23 @@ export default function App() {
               {!todo.isEditing ? (
                 <span className="text-gray-700">{todo.todoContent}</span>
               ) : (
-                <input
-                  type="text"
-                  value={todo.todoContent}
-                  className="border border-gray-400"
-                />
+                <form
+                  onSubmit={(e) => editTodo(e, todo.id)}
+                  className="flex items-center gap-2"
+                >
+                  <input
+                    type="text"
+                    defaultValue={todo.todoContent}
+                    className="p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                  />
+                  <button
+                    type="submit"
+                    className="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-300"
+                  >
+                    Save
+                  </button>
+                </form>
               )}
-
               <div className="space-x-3">
                 {!todo.isEditing ? (
                   <button
@@ -113,8 +130,6 @@ export default function App() {
                         }
                         return todo;
                       });
-
-                      // todos[index].isEditing = true
                       setTodos([...newTodos]);
                     }}
                     className="text-indigo-600 hover:text-indigo-700 focus:outline-none"
@@ -122,17 +137,20 @@ export default function App() {
                     Edit
                   </button>
                 ) : (
-                  <button
-                    onClick={() => {
-                      const newTodos = todos.map((todo, i) => {
-                        todo.isEditing = false;
-                        return todo;
-                      });
-                      setTodos([...newTodos]);
-                    }}
-                  >
-                    cancel
-                  </button>
+                  <>
+                    <button
+                      onClick={() => {
+                        const newTodos = todos.map((todo) => {
+                          todo.isEditing = false;
+                          return todo;
+                        });
+                        setTodos([...newTodos]);
+                      }}
+                      className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-300"
+                    >
+                      Cancel
+                    </button>
+                  </>
                 )}
                 {!todo.isEditing ? (
                   <button
@@ -141,9 +159,7 @@ export default function App() {
                   >
                     Delete
                   </button>
-                ) : (
-                  <button>Save</button>
-                )}
+                ) : null}
               </div>
             </li>
           ))}
