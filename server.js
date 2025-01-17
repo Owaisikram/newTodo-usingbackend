@@ -2,8 +2,8 @@ import express from "express";
 const app = express();
 const port = process.env.PORT || 5000;
 import cors from "cors";
-
-const todos = [];
+import "./database.js";
+import { Todo } from "./models/index.js";
 
 app.use(express.json());
 app.use(
@@ -13,20 +13,22 @@ app.use(
   })
 );
 //yaha sare todos store honge
-app.get("/api/v1/todos", (req, res) => {
+app.get("/api/v1/todos", async (req, res) => {
+  const todos = await Todo.find();
   const message = !todos.length ? "todos empty" : "here your todos";
 
   res.send({ data: todos, message: message });
 });
 
 //yaha ek todo milega
-app.post("/api/v1/todo", (req, res) => {
+app.post("/api/v1/todo", async (req, res) => {
   const obj = {
     todoContent: req.body.todo,
-    id: String(new Date().getTime()),
+    ip: req.ip,
   };
+  // const createdTodo = await Todo.create(obj);
+  console.log("resp", obj);
 
-  todos.push(obj);
   res.send({ message: "Todo added successfully", data: obj });
 });
 

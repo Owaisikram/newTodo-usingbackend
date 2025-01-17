@@ -84,8 +84,6 @@ export default function App() {
             Add Task
           </button>
         </form>
-
-        {!todos?.length && "No todos available. Add some tasks!"}
         {!todos?.length && (
           <p className="text-center text-gray-500">
             No todos available. Add tasks!
@@ -95,7 +93,7 @@ export default function App() {
         <ul className="mt-6 space-y-4">
           {todos?.map((todo, index) => (
             <li
-              key={todo.id}
+              key={todo._id}
               className="flex justify-between items-center p-4 bg-gray-50 rounded-md shadow-sm hover:bg-gray-100 transition-all duration-200"
             >
               {!todo.isEditing ? (
