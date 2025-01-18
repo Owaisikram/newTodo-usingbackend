@@ -93,7 +93,7 @@ export default function App() {
         <ul className="mt-6 space-y-4">
           {todos?.map((todo, index) => (
             <li
-              key={todo._id}
+              key={todo.id}
               className="flex justify-between items-center p-4 bg-gray-50 rounded-md shadow-sm hover:bg-gray-100 transition-all duration-200"
             >
               {!todo.isEditing ? (

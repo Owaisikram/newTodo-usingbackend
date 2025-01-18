@@ -2,9 +2,7 @@ import express from "express";
 const app = express();
 const port = process.env.PORT || 5000;
 import cors from "cors";
-
 const todos = [];
-
 app.use(express.json());
 app.use(
   cors({
@@ -13,7 +11,7 @@ app.use(
   })
 );
 //yaha sare todos store honge
-app.get("/api/v1/todos", (req, res) => {
+app.get("/api/v1/todos", async (req, res) => {
   const message = !todos.length ? "todos empty" : "here your todos";
 
   res.send({ data: todos, message: message });
@@ -25,8 +23,10 @@ app.post("/api/v1/todo", (req, res) => {
     todoContent: req.body.todo,
     id: String(new Date().getTime()),
   };
-
+  console.log("obj" , obj);
+  
   todos.push(obj);
+
   res.send({ message: "Todo added successfully", data: obj });
 });
 
